@@ -15,6 +15,6 @@ ENV PATH="/root/.cargo/bin:$PATH"
 # Set Python environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
-
+ENV UV_SYSTEM_PYTHON=1
 # Default command
 CMD ["/bin/bash"]
