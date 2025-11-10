@@ -20,6 +20,23 @@ Female athletes are a heavily underserved population in sports science research.
 - **REST API**: FastAPI-based endpoints for data ingestion and inference
 - **Comprehensive Testing**: Unit and integration tests with property-based testing
 
+## Repo structure
+
+```
+  AstridML/
+  ├── astridml/          # Main package
+  │   ├── sdg/           # Synthetic data generator
+  │   ├── dpm/           # Data preprocessing
+  │   ├── models/        # ML models and recommender
+  │   └── api/           # FastAPI server
+  ├── tests/             # Comprehensive test suite
+  │   ├── unit/          # Unit tests
+  │   └── integration/   # Integration tests
+  ├── .github/workflows/ # CI/CD
+  ├── example.py         # Demo script
+  └── pyproject.toml     # Package configuration
+```
+
 ## Installation
 
 ### Using uv (recommended)
