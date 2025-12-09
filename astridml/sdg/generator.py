@@ -36,12 +36,14 @@ class SyntheticDataGenerator:
         Determine menstrual cycle phase for a given cycle day.
 
         Maps a cycle day (1-28) to the corresponding menstrual cycle phase
-        based on a typical 28-day cycle.
+        based on a typical 28-day cycle. Automatically wraps cycle days
+        outside the 1-28 range.
 
         Parameters
         ----------
         cycle_day : int
-            Day within the 28-day cycle (1-28).
+            Day within the 28-day cycle (1-28). Values outside this range
+            will be wrapped using modulo arithmetic.
 
         Returns
         -------
@@ -75,7 +77,12 @@ class SyntheticDataGenerator:
         'ovulatory'
         >>> sdg._get_cycle_phase(20)  # Luteal phase
         'luteal'
+        >>> sdg._get_cycle_phase(29)  # Wraps to day 1
+        'menstrual'
         """
+        # Wrap cycle day to 1-28 range
+        cycle_day = ((cycle_day - 1) % 28) + 1
+
         for phase, (start, end) in self.CYCLE_PHASES.items():
             if start <= cycle_day <= end:
                 return phase

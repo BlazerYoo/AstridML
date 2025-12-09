@@ -155,11 +155,10 @@ async def predict(data: CombinedDataInput):
         # Make predictions if model is available
         predictions_dict = {}
         if predictor is not None and predictor.model is not None:
-            # Preprocess data (use transform if already fitted, otherwise fit_transform)
-            if preprocessor.is_fitted:
-                X, _ = preprocessor.transform(combined_df)
-            else:
-                X, _, _ = preprocessor.fit_transform(combined_df)
+            # Use a fresh preprocessor for predictions to handle different cycle phases
+            # Each prediction request may have different cycle phase distributions
+            predict_preprocessor = DataPreprocessor()
+            X, _, _ = predict_preprocessor.fit_transform(combined_df)
 
             # Predict on most recent data
             pred = predictor.predict(X[-1:])
