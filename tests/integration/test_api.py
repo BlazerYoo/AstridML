@@ -2,7 +2,6 @@
 
 import pytest
 from fastapi.testclient import TestClient
-import pandas as pd
 
 from astridml.api import app
 from astridml.sdg import SyntheticDataGenerator

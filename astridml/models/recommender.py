@@ -1,8 +1,6 @@
 """Recommendation engine for nutrition, recovery, and performance advice."""
 
-import numpy as np
 from typing import Dict, List, Optional
-import pandas as pd
 
 
 class RecommendationEngine:

@@ -3,7 +3,7 @@
 import numpy as np
 import pandas as pd
 from datetime import datetime, timedelta
-from typing import Optional, Tuple
+from typing import Optional
 
 
 class SyntheticDataGenerator:

@@ -1,9 +1,8 @@
 """Machine learning model for symptom prediction and performance forecasting."""
 
 import numpy as np
-import tensorflow as tf
 from tensorflow import keras
-from typing import Optional, Dict, List, Tuple
+from typing import Optional, Dict, List
 import json
 
 
