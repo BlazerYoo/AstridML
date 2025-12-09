@@ -32,8 +32,9 @@ Female athletes are a heavily underserved population in sports science research.
   ├── tests/             # Comprehensive test suite
   │   ├── unit/          # Unit tests
   │   └── integration/   # Integration tests
+  ├── examples/          # Example scripts
   ├── .github/workflows/ # CI/CD
-  ├── example.py         # Demo script
+  ├── example.py         # Quick demo script
   └── pyproject.toml     # Package configuration
 ```
 
@@ -62,11 +63,26 @@ pip install -e ".[dev]"
 
 ### Command Line Example
 
-Run the example pipeline:
+Run the basic pipeline example:
 
 ```bash
 python example.py
 ```
+
+For more detailed examples, see the `examples/` directory:
+
+```bash
+# Basic end-to-end pipeline
+python examples/basic_pipeline.py
+
+# Data generation examples
+python examples/data_generation.py
+
+# Recommendation engine scenarios
+python examples/recommendations.py
+```
+
+See [examples/README.md](examples/README.md) for detailed documentation of each example.
 
 ### Python API
 
