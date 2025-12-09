@@ -18,7 +18,7 @@ class SymptomPredictor:
         self,
         input_dim: Optional[int] = None,
         hidden_layers: List[int] = [128, 64, 32],
-        dropout_rate: float = 0.3
+        dropout_rate: float = 0.3,
     ):
         """
         Initialize the symptom predictor.
@@ -47,28 +47,25 @@ class SymptomPredictor:
         if self.input_dim is None:
             raise ValueError("input_dim must be specified before building model")
 
-        model = keras.Sequential([
-            keras.layers.Input(shape=(self.input_dim,)),
-            keras.layers.BatchNormalization()
-        ])
+        model = keras.Sequential(
+            [keras.layers.Input(shape=(self.input_dim,)), keras.layers.BatchNormalization()]
+        )
 
         # Add hidden layers with dropout
         for units in self.hidden_layers:
-            model.add(keras.layers.Dense(
-                units,
-                activation='relu',
-                kernel_regularizer=keras.regularizers.l2(0.01)
-            ))
+            model.add(
+                keras.layers.Dense(
+                    units, activation="relu", kernel_regularizer=keras.regularizers.l2(0.01)
+                )
+            )
             model.add(keras.layers.Dropout(self.dropout_rate))
 
         # Output layer
-        model.add(keras.layers.Dense(output_dim, activation='linear'))
+        model.add(keras.layers.Dense(output_dim, activation="linear"))
 
         # Compile model
         model.compile(
-            optimizer=keras.optimizers.Adam(learning_rate=0.001),
-            loss='mse',
-            metrics=['mae', 'mse']
+            optimizer=keras.optimizers.Adam(learning_rate=0.001), loss="mse", metrics=["mae", "mse"]
         )
 
         self.model = model
@@ -82,7 +79,7 @@ class SymptomPredictor:
         y_val: Optional[np.ndarray] = None,
         epochs: int = 100,
         batch_size: int = 32,
-        verbose: int = 1
+        verbose: int = 1,
     ) -> Dict:
         """
         Train the model on data.
@@ -109,16 +106,16 @@ class SymptomPredictor:
         # Early stopping and learning rate reduction
         callbacks = [
             keras.callbacks.EarlyStopping(
-                monitor='val_loss' if X_val is not None else 'loss',
+                monitor="val_loss" if X_val is not None else "loss",
                 patience=15,
-                restore_best_weights=True
+                restore_best_weights=True,
             ),
             keras.callbacks.ReduceLROnPlateau(
-                monitor='val_loss' if X_val is not None else 'loss',
+                monitor="val_loss" if X_val is not None else "loss",
                 factor=0.5,
                 patience=5,
-                min_lr=1e-6
-            )
+                min_lr=1e-6,
+            ),
         ]
 
         validation_data = (X_val, y_val) if X_val is not None and y_val is not None else None
@@ -130,7 +127,7 @@ class SymptomPredictor:
             epochs=epochs,
             batch_size=batch_size,
             callbacks=callbacks,
-            verbose=verbose
+            verbose=verbose,
         )
 
         self.history = history.history
@@ -151,11 +148,7 @@ class SymptomPredictor:
 
         return self.model.predict(X, verbose=0)
 
-    def evaluate(
-        self,
-        X_test: np.ndarray,
-        y_test: np.ndarray
-    ) -> Dict[str, float]:
+    def evaluate(self, X_test: np.ndarray, y_test: np.ndarray) -> Dict[str, float]:
         """
         Evaluate model performance.
 
@@ -191,11 +184,11 @@ class SymptomPredictor:
 
         # Save configuration
         config = {
-            'input_dim': self.input_dim,
-            'hidden_layers': self.hidden_layers,
-            'dropout_rate': self.dropout_rate
+            "input_dim": self.input_dim,
+            "hidden_layers": self.hidden_layers,
+            "dropout_rate": self.dropout_rate,
         }
-        with open(f"{filepath}_config.json", 'w') as f:
+        with open(f"{filepath}_config.json", "w") as f:
             json.dump(config, f)
 
     def load(self, filepath: str):
@@ -209,10 +202,10 @@ class SymptomPredictor:
 
         # Load configuration
         try:
-            with open(f"{filepath}_config.json", 'r') as f:
+            with open(f"{filepath}_config.json", "r") as f:
                 config = json.load(f)
-                self.input_dim = config['input_dim']
-                self.hidden_layers = config['hidden_layers']
-                self.dropout_rate = config['dropout_rate']
+                self.input_dim = config["input_dim"]
+                self.hidden_layers = config["hidden_layers"]
+                self.dropout_rate = config["dropout_rate"]
         except FileNotFoundError:
             pass

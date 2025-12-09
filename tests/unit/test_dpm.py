@@ -36,17 +36,17 @@ class TestDataPreprocessor:
 
     def test_validate_data_missing_columns(self, preprocessor):
         """Test data validation with missing required columns."""
-        df = pd.DataFrame({'foo': [1, 2, 3]})
+        df = pd.DataFrame({"foo": [1, 2, 3]})
         is_valid, errors = preprocessor.validate_data(df)
 
         assert not is_valid
         assert len(errors) > 0
-        assert any('Missing required columns' in err for err in errors)
+        assert any("Missing required columns" in err for err in errors)
 
     def test_validate_data_invalid_date(self, preprocessor, sample_data):
         """Test data validation with invalid date format."""
         df = sample_data.copy()
-        df['date'] = 'invalid_date'
+        df["date"] = "invalid_date"
 
         is_valid, errors = preprocessor.validate_data(df)
         assert not is_valid
@@ -56,9 +56,9 @@ class TestDataPreprocessor:
         df = sample_data.copy()
 
         # Introduce some missing values
-        df.loc[5, 'resting_heart_rate'] = np.nan
-        df.loc[10, 'sleep_hours'] = np.nan
-        df.loc[15, 'steps'] = np.nan
+        df.loc[5, "resting_heart_rate"] = np.nan
+        df.loc[10, "sleep_hours"] = np.nan
+        df.loc[15, "steps"] = np.nan
 
         df_cleaned = preprocessor.handle_missing_values(df)
 
@@ -70,52 +70,52 @@ class TestDataPreprocessor:
         df = sample_data.copy()
 
         # Set a missing value in time series column
-        original_value = df.loc[4, 'resting_heart_rate']
-        df.loc[5, 'resting_heart_rate'] = np.nan
+        original_value = df.loc[4, "resting_heart_rate"]
+        df.loc[5, "resting_heart_rate"] = np.nan
 
         df_cleaned = preprocessor.handle_missing_values(df)
 
         # Should be filled with previous value
-        assert df_cleaned.loc[5, 'resting_heart_rate'] == original_value
+        assert df_cleaned.loc[5, "resting_heart_rate"] == original_value
 
     def test_engineer_features_temporal(self, preprocessor, sample_data):
         """Test temporal feature engineering."""
         df = preprocessor.engineer_features(sample_data)
 
-        assert 'day_of_week' in df.columns
-        assert 'is_weekend' in df.columns
-        assert df['day_of_week'].between(0, 6).all()
-        assert df['is_weekend'].isin([0, 1]).all()
+        assert "day_of_week" in df.columns
+        assert "is_weekend" in df.columns
+        assert df["day_of_week"].between(0, 6).all()
+        assert df["is_weekend"].isin([0, 1]).all()
 
     def test_engineer_features_rolling(self, preprocessor, sample_data):
         """Test rolling average features."""
         df = preprocessor.engineer_features(sample_data)
 
         # Check rolling features exist
-        assert 'resting_heart_rate_rolling_7d' in df.columns
-        assert 'energy_level_rolling_7d' in df.columns
-        assert 'mood_score_rolling_7d_std' in df.columns
+        assert "resting_heart_rate_rolling_7d" in df.columns
+        assert "energy_level_rolling_7d" in df.columns
+        assert "mood_score_rolling_7d_std" in df.columns
 
         # Check no NaNs in rolling features
-        assert not df['resting_heart_rate_rolling_7d'].isnull().any()
+        assert not df["resting_heart_rate_rolling_7d"].isnull().any()
 
     def test_engineer_features_trends(self, preprocessor, sample_data):
         """Test trend feature engineering."""
         df = preprocessor.engineer_features(sample_data)
 
         # Check trend features exist
-        assert 'resting_heart_rate_trend' in df.columns
-        assert 'energy_level_trend' in df.columns
+        assert "resting_heart_rate_trend" in df.columns
+        assert "energy_level_trend" in df.columns
 
         # First value should be 0 (no previous data)
-        assert df['resting_heart_rate_trend'].iloc[0] == 0
+        assert df["resting_heart_rate_trend"].iloc[0] == 0
 
     def test_engineer_features_cycle_phase_encoding(self, preprocessor, sample_data):
         """Test cycle phase one-hot encoding."""
         df = preprocessor.engineer_features(sample_data)
 
         # Check one-hot encoded columns exist
-        phase_cols = [col for col in df.columns if col.startswith('phase_')]
+        phase_cols = [col for col in df.columns if col.startswith("phase_")]
         assert len(phase_cols) > 0
 
         # Check that exactly one phase is active per row
@@ -126,13 +126,13 @@ class TestDataPreprocessor:
         """Test derived metric features."""
         df = preprocessor.engineer_features(sample_data)
 
-        assert 'recovery_ratio' in df.columns
-        assert 'hrv_rhr_ratio' in df.columns
-        assert 'energy_training_interaction' in df.columns
+        assert "recovery_ratio" in df.columns
+        assert "hrv_rhr_ratio" in df.columns
+        assert "energy_training_interaction" in df.columns
 
         # Check no NaNs
-        assert not df['recovery_ratio'].isnull().any()
-        assert not df['hrv_rhr_ratio'].isnull().any()
+        assert not df["recovery_ratio"].isnull().any()
+        assert not df["hrv_rhr_ratio"].isnull().any()
 
     def test_prepare_features_shape(self, preprocessor, sample_data):
         """Test feature preparation produces correct shape."""
@@ -146,7 +146,7 @@ class TestDataPreprocessor:
     def test_prepare_features_with_targets(self, preprocessor, sample_data):
         """Test feature preparation with target columns."""
         df = preprocessor.engineer_features(sample_data)
-        target_cols = ['energy_level', 'mood_score', 'pain_level']
+        target_cols = ["energy_level", "mood_score", "pain_level"]
 
         X, y, feature_cols = preprocessor.prepare_features(df, target_cols)
 
@@ -160,7 +160,7 @@ class TestDataPreprocessor:
 
     def test_fit_transform(self, preprocessor, sample_data):
         """Test fit_transform pipeline."""
-        target_cols = ['energy_level', 'mood_score', 'pain_level']
+        target_cols = ["energy_level", "mood_score", "pain_level"]
         X, y, feature_cols = preprocessor.fit_transform(sample_data, target_cols)
 
         assert preprocessor.is_fitted
@@ -171,7 +171,7 @@ class TestDataPreprocessor:
 
     def test_fit_transform_scaling(self, preprocessor, sample_data):
         """Test that features are properly scaled."""
-        target_cols = ['energy_level']
+        target_cols = ["energy_level"]
         X, _, _ = preprocessor.fit_transform(sample_data, target_cols)
 
         # After standardization, mean should be close to 0, std close to 1
@@ -189,7 +189,7 @@ class TestDataPreprocessor:
     def test_transform_after_fit(self, preprocessor, sample_data):
         """Test transform after fitting."""
         # Fit on data
-        target_cols = ['energy_level']
+        target_cols = ["energy_level"]
         preprocessor.fit_transform(sample_data, target_cols)
 
         # Generate new data
@@ -217,7 +217,7 @@ class TestDataPreprocessor:
 
     def test_fit_transform_invalid_data_raises(self, preprocessor):
         """Test that invalid data raises error."""
-        df = pd.DataFrame({'foo': [1, 2, 3]})
+        df = pd.DataFrame({"foo": [1, 2, 3]})
 
         with pytest.raises(ValueError, match="validation failed"):
             preprocessor.fit_transform(df)
@@ -240,7 +240,7 @@ class TestDataPreprocessor:
         sdg = SyntheticDataGenerator(seed=42)
         data1 = sdg.generate_combined_data(n_days=60)
 
-        preprocessor.fit_transform(data1, ['energy_level'])
+        preprocessor.fit_transform(data1, ["energy_level"])
         mean_1 = preprocessor.scaler.mean_
 
         # Fit on different data
@@ -248,7 +248,7 @@ class TestDataPreprocessor:
         data2 = sdg2.generate_combined_data(n_days=60)
 
         preprocessor2 = DataPreprocessor()
-        preprocessor2.fit_transform(data2, ['energy_level'])
+        preprocessor2.fit_transform(data2, ["energy_level"])
         mean_2 = preprocessor2.scaler.mean_
 
         # Means should be different (different data distributions)
@@ -259,7 +259,7 @@ class TestDataPreprocessor:
         sdg = SyntheticDataGenerator(seed=42)
         small_data = sdg.generate_combined_data(n_days=10)
 
-        X, y, _ = preprocessor.fit_transform(small_data, ['energy_level'])
+        X, y, _ = preprocessor.fit_transform(small_data, ["energy_level"])
 
         assert X.shape[0] == 10
         assert y.shape[0] == 10
@@ -273,7 +273,7 @@ class TestDataPreprocessor:
         df_processed = preprocessor.engineer_features(df)
 
         # Check dates are sorted
-        dates = pd.to_datetime(df_processed['date'])
+        dates = pd.to_datetime(df_processed["date"])
         assert dates.is_monotonic_increasing
 
     def test_rolling_features_respect_time_order(self, preprocessor, sample_data):
@@ -282,13 +282,13 @@ class TestDataPreprocessor:
 
         # Rolling average should be close to actual values (within reason)
         for i in range(7, len(df)):
-            actual_mean = df.loc[i-7:i, 'energy_level'].mean()
-            rolling_mean = df.loc[i, 'energy_level_rolling_7d']
+            actual_mean = df.loc[i - 7 : i, "energy_level"].mean()
+            rolling_mean = df.loc[i, "energy_level_rolling_7d"]
             assert abs(actual_mean - rolling_mean) < 0.1
 
     def test_multiple_target_columns(self, preprocessor, sample_data):
         """Test handling multiple target columns."""
-        target_cols = ['energy_level', 'mood_score', 'pain_level', 'training_load']
+        target_cols = ["energy_level", "mood_score", "pain_level", "training_load"]
         X, y, feature_cols = preprocessor.fit_transform(sample_data, target_cols)
 
         assert y.shape[1] == len(target_cols)

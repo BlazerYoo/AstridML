@@ -7,8 +7,8 @@ from astridml.models import SymptomPredictor, RecommendationEngine
 __version__ = "0.1.0"
 
 __all__ = [
-    'SyntheticDataGenerator',
-    'DataPreprocessor',
-    'SymptomPredictor',
-    'RecommendationEngine',
+    "SyntheticDataGenerator",
+    "DataPreprocessor",
+    "SymptomPredictor",
+    "RecommendationEngine",
 ]

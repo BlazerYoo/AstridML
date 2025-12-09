@@ -15,7 +15,7 @@ from astridml import (
     SyntheticDataGenerator,
     DataPreprocessor,
     SymptomPredictor,
-    RecommendationEngine
+    RecommendationEngine,
 )
 
 
@@ -34,7 +34,7 @@ def main():
     # Step 2: Preprocess data
     print("\n[2/5] Preprocessing data...")
     preprocessor = DataPreprocessor()
-    target_cols = ['energy_level', 'mood_score', 'pain_level']
+    target_cols = ["energy_level", "mood_score", "pain_level"]
     X, y, feature_names = preprocessor.fit_transform(data, target_cols)
     print(f"      Features: {len(feature_names)}")
     print(f"      Training samples: {len(X)}")
@@ -60,19 +60,19 @@ def main():
 
     current_row = data.iloc[-1]
     current_state = {
-        'cycle_phase': current_row['cycle_phase'],
-        'energy_level': current_row['energy_level'],
-        'pain_level': current_row['pain_level'],
-        'mood_score': current_row['mood_score'],
-        'sleep_quality_score': current_row['sleep_quality_score'],
-        'heart_rate_variability': current_row['heart_rate_variability'],
-        'heart_rate_variability_rolling_7d': current_row['heart_rate_variability']
+        "cycle_phase": current_row["cycle_phase"],
+        "energy_level": current_row["energy_level"],
+        "pain_level": current_row["pain_level"],
+        "mood_score": current_row["mood_score"],
+        "sleep_quality_score": current_row["sleep_quality_score"],
+        "heart_rate_variability": current_row["heart_rate_variability"],
+        "heart_rate_variability_rolling_7d": current_row["heart_rate_variability"],
     }
 
     prediction_dict = {
-        'energy_level': float(predictions[0][0]),
-        'mood_score': float(predictions[0][1]),
-        'pain_level': float(predictions[0][2])
+        "energy_level": float(predictions[0][0]),
+        "mood_score": float(predictions[0][1]),
+        "pain_level": float(predictions[0][2]),
     }
 
     recommendations = recommender.generate_recommendations(current_state, prediction_dict)

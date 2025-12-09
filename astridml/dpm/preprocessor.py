@@ -32,14 +32,14 @@ class DataPreprocessor:
         """
         errors = []
 
-        required_cols = ['date', 'cycle_day', 'cycle_phase']
+        required_cols = ["date", "cycle_day", "cycle_phase"]
         missing_cols = [col for col in required_cols if col not in df.columns]
         if missing_cols:
             errors.append(f"Missing required columns: {missing_cols}")
 
-        if 'date' in df.columns:
+        if "date" in df.columns:
             try:
-                pd.to_datetime(df['date'])
+                pd.to_datetime(df["date"])
             except Exception as e:
                 errors.append(f"Invalid date format: {e}")
 
@@ -63,15 +63,17 @@ class DataPreprocessor:
 
         # Forward fill for time series data (suitable for vital signs)
         time_series_cols = [
-            'resting_heart_rate', 'heart_rate_variability',
-            'sleep_hours', 'sleep_quality_score'
+            "resting_heart_rate",
+            "heart_rate_variability",
+            "sleep_hours",
+            "sleep_quality_score",
         ]
         for col in time_series_cols:
             if col in df.columns:
                 df[col] = df[col].ffill().bfill()
 
         # Fill zero for count-based metrics
-        count_cols = ['steps', 'active_minutes', 'calories_burned']
+        count_cols = ["steps", "active_minutes", "calories_burned"]
         for col in count_cols:
             if col in df.columns:
                 df[col] = df[col].fillna(0)
@@ -97,57 +99,65 @@ class DataPreprocessor:
         df = df.copy()
 
         # Ensure date is datetime
-        df['date'] = pd.to_datetime(df['date'])
-        df = df.sort_values('date').reset_index(drop=True)
+        df["date"] = pd.to_datetime(df["date"])
+        df = df.sort_values("date").reset_index(drop=True)
 
         # Temporal features
-        df['day_of_week'] = df['date'].dt.dayofweek
-        df['is_weekend'] = (df['day_of_week'] >= 5).astype(int)
+        df["day_of_week"] = df["date"].dt.dayofweek
+        df["is_weekend"] = (df["day_of_week"] >= 5).astype(int)
 
         # Rolling averages (7-day windows)
         rolling_cols = [
-            'resting_heart_rate', 'heart_rate_variability',
-            'sleep_hours', 'sleep_quality_score', 'training_load',
-            'energy_level', 'mood_score', 'pain_level'
+            "resting_heart_rate",
+            "heart_rate_variability",
+            "sleep_hours",
+            "sleep_quality_score",
+            "training_load",
+            "energy_level",
+            "mood_score",
+            "pain_level",
         ]
 
         for col in rolling_cols:
             if col in df.columns:
-                df[f'{col}_rolling_7d'] = df[col].rolling(window=7, min_periods=1).mean()
-                df[f'{col}_rolling_7d_std'] = df[col].rolling(window=7, min_periods=1).std().fillna(0)
+                df[f"{col}_rolling_7d"] = df[col].rolling(window=7, min_periods=1).mean()
+                df[f"{col}_rolling_7d_std"] = (
+                    df[col].rolling(window=7, min_periods=1).std().fillna(0)
+                )
 
         # Trend features (difference from previous day)
         trend_cols = [
-            'resting_heart_rate', 'heart_rate_variability',
-            'sleep_quality_score', 'energy_level', 'mood_score'
+            "resting_heart_rate",
+            "heart_rate_variability",
+            "sleep_quality_score",
+            "energy_level",
+            "mood_score",
         ]
 
         for col in trend_cols:
             if col in df.columns:
-                df[f'{col}_trend'] = df[col].diff().fillna(0)
+                df[f"{col}_trend"] = df[col].diff().fillna(0)
 
         # Recovery metrics
-        if 'sleep_hours' in df.columns and 'training_load' in df.columns:
-            df['recovery_ratio'] = df['sleep_hours'] / (df['training_load'] + 1)
+        if "sleep_hours" in df.columns and "training_load" in df.columns:
+            df["recovery_ratio"] = df["sleep_hours"] / (df["training_load"] + 1)
 
-        if 'heart_rate_variability' in df.columns and 'resting_heart_rate' in df.columns:
-            df['hrv_rhr_ratio'] = df['heart_rate_variability'] / df['resting_heart_rate']
+        if "heart_rate_variability" in df.columns and "resting_heart_rate" in df.columns:
+            df["hrv_rhr_ratio"] = df["heart_rate_variability"] / df["resting_heart_rate"]
 
         # Cycle phase encoding (one-hot)
-        if 'cycle_phase' in df.columns:
-            phase_dummies = pd.get_dummies(df['cycle_phase'], prefix='phase')
+        if "cycle_phase" in df.columns:
+            phase_dummies = pd.get_dummies(df["cycle_phase"], prefix="phase")
             df = pd.concat([df, phase_dummies], axis=1)
 
         # Interaction features
-        if 'energy_level' in df.columns and 'training_load' in df.columns:
-            df['energy_training_interaction'] = df['energy_level'] * df['training_load']
+        if "energy_level" in df.columns and "training_load" in df.columns:
+            df["energy_training_interaction"] = df["energy_level"] * df["training_load"]
 
         return df
 
     def prepare_features(
-        self,
-        df: pd.DataFrame,
-        target_cols: Optional[List[str]] = None
+        self, df: pd.DataFrame, target_cols: Optional[List[str]] = None
     ) -> Tuple[np.ndarray, Optional[np.ndarray], List[str]]:
         """
         Prepare features for machine learning, including scaling.
@@ -162,7 +172,7 @@ class DataPreprocessor:
         df = df.copy()
 
         # Columns to exclude from features
-        exclude_cols = ['date', 'cycle_phase']
+        exclude_cols = ["date", "cycle_phase"]
         if target_cols:
             exclude_cols.extend(target_cols)
 
@@ -178,9 +188,7 @@ class DataPreprocessor:
         return X, y, feature_cols
 
     def fit_transform(
-        self,
-        df: pd.DataFrame,
-        target_cols: Optional[List[str]] = None
+        self, df: pd.DataFrame, target_cols: Optional[List[str]] = None
     ) -> Tuple[np.ndarray, Optional[np.ndarray], List[str]]:
         """
         Fit the preprocessor and transform the data.
@@ -213,9 +221,7 @@ class DataPreprocessor:
         return X_scaled, y, feature_cols
 
     def transform(
-        self,
-        df: pd.DataFrame,
-        target_cols: Optional[List[str]] = None
+        self, df: pd.DataFrame, target_cols: Optional[List[str]] = None
     ) -> Tuple[np.ndarray, Optional[np.ndarray]]:
         """
         Transform new data using fitted preprocessor.

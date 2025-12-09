@@ -9,13 +9,13 @@ def check_imports():
     errors = []
 
     packages = [
-        ('numpy', 'NumPy'),
-        ('pandas', 'pandas'),
-        ('scipy', 'SciPy'),
-        ('sklearn', 'scikit-learn'),
-        ('tensorflow', 'TensorFlow'),
-        ('fastapi', 'FastAPI'),
-        ('pydantic', 'Pydantic'),
+        ("numpy", "NumPy"),
+        ("pandas", "pandas"),
+        ("scipy", "SciPy"),
+        ("sklearn", "scikit-learn"),
+        ("tensorflow", "TensorFlow"),
+        ("fastapi", "FastAPI"),
+        ("pydantic", "Pydantic"),
     ]
 
     for module_name, display_name in packages:
@@ -35,10 +35,10 @@ def check_astridml():
     errors = []
 
     modules = [
-        ('astridml.sdg', 'Synthetic Data Generator'),
-        ('astridml.dpm', 'Data Preprocessing Module'),
-        ('astridml.models', 'ML Models'),
-        ('astridml.api', 'API'),
+        ("astridml.sdg", "Synthetic Data Generator"),
+        ("astridml.dpm", "Data Preprocessing Module"),
+        ("astridml.models", "ML Models"),
+        ("astridml.api", "API"),
     ]
 
     for module_name, display_name in modules:

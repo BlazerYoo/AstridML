@@ -38,75 +38,75 @@ def main():
     print_scenario(
         "Menstrual Phase - High Pain Day",
         {
-            'cycle_phase': 'menstrual',
-            'energy_level': 3.5,
-            'pain_level': 7.0,
-            'mood_score': 5.0,
-            'sleep_quality_score': 60.0,
-            'heart_rate_variability': 55.0,
-            'heart_rate_variability_rolling_7d': 65.0
-        }
+            "cycle_phase": "menstrual",
+            "energy_level": 3.5,
+            "pain_level": 7.0,
+            "mood_score": 5.0,
+            "sleep_quality_score": 60.0,
+            "heart_rate_variability": 55.0,
+            "heart_rate_variability_rolling_7d": 65.0,
+        },
     )
 
     # Scenario 2: Follicular phase with high energy
     print_scenario(
         "Follicular Phase - High Energy Day",
         {
-            'cycle_phase': 'follicular',
-            'energy_level': 8.5,
-            'pain_level': 1.0,
-            'mood_score': 8.5,
-            'sleep_quality_score': 85.0,
-            'heart_rate_variability': 75.0,
-            'heart_rate_variability_rolling_7d': 65.0
-        }
+            "cycle_phase": "follicular",
+            "energy_level": 8.5,
+            "pain_level": 1.0,
+            "mood_score": 8.5,
+            "sleep_quality_score": 85.0,
+            "heart_rate_variability": 75.0,
+            "heart_rate_variability_rolling_7d": 65.0,
+        },
     )
 
     # Scenario 3: Ovulatory phase - peak performance
     print_scenario(
         "Ovulatory Phase - Peak Performance Window",
         {
-            'cycle_phase': 'ovulatory',
-            'energy_level': 9.0,
-            'pain_level': 0.5,
-            'mood_score': 9.0,
-            'sleep_quality_score': 90.0,
-            'heart_rate_variability': 80.0,
-            'heart_rate_variability_rolling_7d': 65.0
-        }
+            "cycle_phase": "ovulatory",
+            "energy_level": 9.0,
+            "pain_level": 0.5,
+            "mood_score": 9.0,
+            "sleep_quality_score": 90.0,
+            "heart_rate_variability": 80.0,
+            "heart_rate_variability_rolling_7d": 65.0,
+        },
     )
 
     # Scenario 4: Luteal phase with poor recovery
     print_scenario(
         "Luteal Phase - Poor Recovery",
         {
-            'cycle_phase': 'luteal',
-            'energy_level': 4.0,
-            'pain_level': 3.5,
-            'mood_score': 4.5,
-            'sleep_quality_score': 55.0,
-            'heart_rate_variability': 50.0,
-            'heart_rate_variability_rolling_7d': 65.0
-        }
+            "cycle_phase": "luteal",
+            "energy_level": 4.0,
+            "pain_level": 3.5,
+            "mood_score": 4.5,
+            "sleep_quality_score": 55.0,
+            "heart_rate_variability": 50.0,
+            "heart_rate_variability_rolling_7d": 65.0,
+        },
     )
 
     # Scenario 5: With predictions
     print_scenario(
         "Luteal Phase - With Tomorrow's Predictions",
         {
-            'cycle_phase': 'luteal',
-            'energy_level': 6.0,
-            'pain_level': 2.0,
-            'mood_score': 6.5,
-            'sleep_quality_score': 70.0,
-            'heart_rate_variability': 60.0,
-            'heart_rate_variability_rolling_7d': 65.0
+            "cycle_phase": "luteal",
+            "energy_level": 6.0,
+            "pain_level": 2.0,
+            "mood_score": 6.5,
+            "sleep_quality_score": 70.0,
+            "heart_rate_variability": 60.0,
+            "heart_rate_variability_rolling_7d": 65.0,
         },
         predictions={
-            'energy_level': 3.5,  # Predicting low energy tomorrow
-            'mood_score': 5.0,
-            'pain_level': 4.5
-        }
+            "energy_level": 3.5,  # Predicting low energy tomorrow
+            "mood_score": 5.0,
+            "pain_level": 4.5,
+        },
     )
 
     print("\n" + "=" * 70)

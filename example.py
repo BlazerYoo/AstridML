@@ -4,7 +4,7 @@ from astridml import (
     SyntheticDataGenerator,
     DataPreprocessor,
     SymptomPredictor,
-    RecommendationEngine
+    RecommendationEngine,
 )
 
 
@@ -24,7 +24,7 @@ def main():
     # 2. Preprocess data
     print("\n2. Preprocessing data...")
     preprocessor = DataPreprocessor()
-    target_cols = ['energy_level', 'mood_score', 'pain_level']
+    target_cols = ["energy_level", "mood_score", "pain_level"]
 
     X_train, y_train, feature_names = preprocessor.fit_transform(data, target_cols)
     print(f"   Features: {len(feature_names)}")
@@ -34,12 +34,7 @@ def main():
     # 3. Train ML model
     print("\n3. Training machine learning model...")
     predictor = SymptomPredictor(input_dim=X_train.shape[1])
-    history = predictor.train(
-        X_train, y_train,
-        epochs=50,
-        batch_size=16,
-        verbose=0
-    )
+    history = predictor.train(X_train, y_train, epochs=50, batch_size=16, verbose=0)
     print(f"   Initial loss: {history['loss'][0]:.4f}")
     print(f"   Final loss: {history['loss'][-1]:.4f}")
 
@@ -64,25 +59,22 @@ def main():
     # Get current state from most recent data
     current_row = data.iloc[-1]
     current_state = {
-        'cycle_phase': current_row['cycle_phase'],
-        'energy_level': current_row['energy_level'],
-        'pain_level': current_row['pain_level'],
-        'mood_score': current_row['mood_score'],
-        'sleep_quality_score': current_row['sleep_quality_score'],
-        'heart_rate_variability': current_row['heart_rate_variability'],
-        'heart_rate_variability_rolling_7d': current_row['heart_rate_variability']
+        "cycle_phase": current_row["cycle_phase"],
+        "energy_level": current_row["energy_level"],
+        "pain_level": current_row["pain_level"],
+        "mood_score": current_row["mood_score"],
+        "sleep_quality_score": current_row["sleep_quality_score"],
+        "heart_rate_variability": current_row["heart_rate_variability"],
+        "heart_rate_variability_rolling_7d": current_row["heart_rate_variability"],
     }
 
     prediction_dict = {
-        'energy_level': float(predictions[0][0]),
-        'mood_score': float(predictions[0][1]),
-        'pain_level': float(predictions[0][2])
+        "energy_level": float(predictions[0][0]),
+        "mood_score": float(predictions[0][1]),
+        "pain_level": float(predictions[0][2]),
     }
 
-    recommendations = recommender.generate_recommendations(
-        current_state,
-        prediction_dict
-    )
+    recommendations = recommender.generate_recommendations(current_state, prediction_dict)
 
     print(f"\n   Current Cycle Phase: {current_state['cycle_phase'].upper()}")
     print(f"   Current Energy: {current_state['energy_level']:.1f}/10")

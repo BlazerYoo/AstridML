@@ -2,4 +2,4 @@
 
 from astridml.dpm.preprocessor import DataPreprocessor
 
-__all__ = ['DataPreprocessor']
+__all__ = ["DataPreprocessor"]
