@@ -3,7 +3,6 @@
 import pytest
 import pandas as pd
 import numpy as np
-from datetime import datetime
 
 from astridml.dpm import DataPreprocessor
 from astridml.sdg import SyntheticDataGenerator
