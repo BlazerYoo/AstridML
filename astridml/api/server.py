@@ -99,8 +99,8 @@ async def ingest_data(data: CombinedDataInput) -> Dict:
     """
     try:
         # Convert to DataFrames
-        wearable_df = pd.DataFrame([item.dict() for item in data.wearable_data])
-        symptom_df = pd.DataFrame([item.dict() for item in data.symptom_data])
+        wearable_df = pd.DataFrame([item.model_dump() for item in data.wearable_data])
+        symptom_df = pd.DataFrame([item.model_dump() for item in data.symptom_data])
 
         # Merge data
         combined_df = pd.merge(
@@ -119,6 +119,8 @@ async def ingest_data(data: CombinedDataInput) -> Dict:
             "timestamp": datetime.now().isoformat(),
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -133,8 +135,8 @@ async def predict(data: CombinedDataInput):
     """
     try:
         # Convert to DataFrames
-        wearable_df = pd.DataFrame([item.dict() for item in data.wearable_data])
-        symptom_df = pd.DataFrame([item.dict() for item in data.symptom_data])
+        wearable_df = pd.DataFrame([item.model_dump() for item in data.wearable_data])
+        symptom_df = pd.DataFrame([item.model_dump() for item in data.symptom_data])
 
         # Merge data
         combined_df = pd.merge(
@@ -153,8 +155,11 @@ async def predict(data: CombinedDataInput):
         # Make predictions if model is available
         predictions_dict = {}
         if predictor is not None and predictor.model is not None:
-            # Preprocess data
-            X, _, _ = preprocessor.fit_transform(combined_df)
+            # Preprocess data (use transform if already fitted, otherwise fit_transform)
+            if preprocessor.is_fitted:
+                X, _ = preprocessor.transform(combined_df)
+            else:
+                X, _, _ = preprocessor.fit_transform(combined_df)
 
             # Predict on most recent data
             pred = predictor.predict(X[-1:])
@@ -187,6 +192,8 @@ async def predict(data: CombinedDataInput):
             "timestamp": datetime.now().isoformat(),
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -203,8 +210,8 @@ async def train_model(data: CombinedDataInput) -> Dict:
 
     try:
         # Convert to DataFrames
-        wearable_df = pd.DataFrame([item.dict() for item in data.wearable_data])
-        symptom_df = pd.DataFrame([item.dict() for item in data.symptom_data])
+        wearable_df = pd.DataFrame([item.model_dump() for item in data.wearable_data])
+        symptom_df = pd.DataFrame([item.model_dump() for item in data.symptom_data])
 
         # Merge data
         combined_df = pd.merge(
@@ -237,6 +244,8 @@ async def train_model(data: CombinedDataInput) -> Dict:
             "timestamp": datetime.now().isoformat(),
         }
 
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

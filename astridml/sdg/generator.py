@@ -31,20 +31,17 @@ class SyntheticDataGenerator:
         """
         self.rng = np.random.default_rng(seed)
 
-    def _get_cycle_phase(self, day: int) -> str:
+    def _get_cycle_phase(self, cycle_day: int) -> str:
         """
         Determine menstrual cycle phase for a given cycle day.
 
-        Maps a sequential day number to the corresponding menstrual cycle phase
-        based on a typical 28-day cycle. The cycle automatically wraps around
-        after 28 days.
+        Maps a cycle day (1-28) to the corresponding menstrual cycle phase
+        based on a typical 28-day cycle.
 
         Parameters
         ----------
-        day : int
-            Sequential day number (0-indexed). Values larger than 28 will wrap
-            around using modulo arithmetic. For example, day 30 maps to cycle
-            day 2.
+        cycle_day : int
+            Day within the 28-day cycle (1-28).
 
         Returns
         -------
@@ -70,16 +67,15 @@ class SyntheticDataGenerator:
         Examples
         --------
         >>> sdg = SyntheticDataGenerator(seed=42)
-        >>> sdg._get_cycle_phase(0)   # First day
+        >>> sdg._get_cycle_phase(1)   # First day
         'menstrual'
         >>> sdg._get_cycle_phase(10)  # Follicular phase
         'follicular'
         >>> sdg._get_cycle_phase(14)  # Ovulation
         'ovulatory'
-        >>> sdg._get_cycle_phase(29)  # Wraps to day 2
-        'menstrual'
+        >>> sdg._get_cycle_phase(20)  # Luteal phase
+        'luteal'
         """
-        cycle_day = ((day - 1) % 28) + 1
         for phase, (start, end) in self.CYCLE_PHASES.items():
             if start <= cycle_day <= end:
                 return phase
@@ -283,7 +279,9 @@ class SyntheticDataGenerator:
         data = []
 
         for day_idx, date in enumerate(dates):
-            phase = self._get_cycle_phase(day_idx)
+            # Calculate cycle day first
+            cycle_day = ((day_idx) % 28) + 1
+            phase = self._get_cycle_phase(cycle_day)
             mods = self._generate_cycle_modifiers(phase)
 
             # Base values with noise
@@ -322,7 +320,7 @@ class SyntheticDataGenerator:
                     "active_minutes": active_minutes,
                     "calories_burned": calories_burned,
                     "training_load": round(training_load, 1),
-                    "cycle_day": ((day_idx) % 28) + 1,
+                    "cycle_day": cycle_day,
                     "cycle_phase": phase,
                 }
             )
@@ -429,7 +427,9 @@ class SyntheticDataGenerator:
         data = []
 
         for day_idx, date in enumerate(dates):
-            phase = self._get_cycle_phase(day_idx)
+            # Calculate cycle day first
+            cycle_day = ((day_idx) % 28) + 1
+            phase = self._get_cycle_phase(cycle_day)
             mods = self._generate_cycle_modifiers(phase)
 
             # Scale modifiers to 1-10 scale
@@ -441,9 +441,8 @@ class SyntheticDataGenerator:
             bloating = max(0, min(10, 3 + (mods["pain"] * 8) + self.rng.normal(0, 1.5)))
             breast_tenderness = max(0, min(10, 2 + (mods["pain"] * 7) + self.rng.normal(0, 1.5)))
 
-            # Track if currently menstruating
-            cycle_day = ((day_idx) % 28) + 1
-            is_menstruating = 1 <= cycle_day <= 5
+            # Track if currently menstruating (only during menstrual phase)
+            is_menstruating = phase == "menstrual"
             flow_level = 0
             if is_menstruating:
                 # Flow typically peaks around day 2-3

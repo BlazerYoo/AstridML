@@ -120,9 +120,9 @@ class DataPreprocessor:
 
         for col in rolling_cols:
             if col in df.columns:
-                df[f"{col}_rolling_7d"] = df[col].rolling(window=7, min_periods=1).mean()
+                df[f"{col}_rolling_7d"] = df[col].rolling(window=8, min_periods=1).mean()
                 df[f"{col}_rolling_7d_std"] = (
-                    df[col].rolling(window=7, min_periods=1).std().fillna(0)
+                    df[col].rolling(window=8, min_periods=1).std().fillna(0)
                 )
 
         # Trend features (difference from previous day)

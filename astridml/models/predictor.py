@@ -33,6 +33,7 @@ class SymptomPredictor:
         self.dropout_rate = dropout_rate
         self.model: Optional[keras.Model] = None
         self.history = None
+        self.is_fitted = False
 
     def build_model(self, output_dim: int = 3) -> keras.Model:
         """
@@ -131,6 +132,7 @@ class SymptomPredictor:
         )
 
         self.history = history.history
+        self.is_fitted = True
         return self.history
 
     def predict(self, X: np.ndarray) -> np.ndarray:
@@ -162,10 +164,11 @@ class SymptomPredictor:
         if self.model is None:
             raise ValueError("Model must be trained before evaluation")
 
-        results = self.model.evaluate(X_test, y_test, verbose=0)
+        results = self.model.evaluate(X_test, y_test, verbose=0, return_dict=True)
 
+        # Convert to float and ensure proper metric names
         metrics = {}
-        for name, value in zip(self.model.metrics_names, results):
+        for name, value in results.items():
             metrics[name] = float(value)
 
         return metrics
@@ -199,6 +202,7 @@ class SymptomPredictor:
             filepath: Path to the saved model
         """
         self.model = keras.models.load_model(filepath)
+        self.is_fitted = True
 
         # Load configuration
         try:
