@@ -155,10 +155,15 @@ async def predict(data: CombinedDataInput):
         # Make predictions if model is available
         predictions_dict = {}
         if predictor is not None and predictor.model is not None:
-            # Use a fresh preprocessor for predictions to handle different cycle phases
-            # Each prediction request may have different cycle phase distributions
-            predict_preprocessor = DataPreprocessor()
-            X, _, _ = predict_preprocessor.fit_transform(combined_df)
+            # Use the global preprocessor that was fitted during training
+            # The preprocessor now handles different cycle phases consistently
+            if not preprocessor.is_fitted:
+                raise HTTPException(
+                    status_code=400,
+                    detail="Model has not been trained yet. Please train the model first.",
+                )
+
+            X, _ = preprocessor.transform(combined_df)
 
             # Predict on most recent data
             pred = predictor.predict(X[-1:])

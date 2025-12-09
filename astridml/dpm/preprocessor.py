@@ -146,8 +146,17 @@ class DataPreprocessor:
             df["hrv_rhr_ratio"] = df["heart_rate_variability"] / df["resting_heart_rate"]
 
         # Cycle phase encoding (one-hot)
+        # Always create all 4 phase columns for consistency
         if "cycle_phase" in df.columns:
             phase_dummies = pd.get_dummies(df["cycle_phase"], prefix="phase")
+            # Ensure all phase columns exist, even if not in data
+            for phase in ["menstrual", "follicular", "ovulatory", "luteal"]:
+                col_name = f"phase_{phase}"
+                if col_name not in phase_dummies.columns:
+                    phase_dummies[col_name] = 0
+            # Sort columns to ensure consistent order
+            phase_cols = sorted([col for col in phase_dummies.columns if col.startswith("phase_")])
+            phase_dummies = phase_dummies[phase_cols]
             df = pd.concat([df, phase_dummies], axis=1)
 
         # Interaction features
@@ -245,16 +254,19 @@ class DataPreprocessor:
         df = self.handle_missing_values(df)
         df = self.engineer_features(df)
 
-        # Prepare features with same columns as training
-        X, y, _ = self.prepare_features(df, target_cols)
+        # Select exact same features as training in the same order
+        missing_cols = [col for col in self.feature_columns if col not in df.columns]
+        if missing_cols:
+            raise ValueError(f"Missing feature columns: {missing_cols}")
 
-        # Ensure same features as training
-        if X.shape[1] != len(self.feature_columns):
-            raise ValueError(
-                f"Feature mismatch: expected {len(self.feature_columns)}, got {X.shape[1]}"
-            )
+        X = df[self.feature_columns].values
 
-        # Transform
+        # Extract targets if specified
+        y = None
+        if target_cols:
+            y = df[target_cols].values if len(target_cols) > 1 else df[target_cols[0]].values
+
+        # Transform using fitted scaler
         X_scaled = self.scaler.transform(X)
 
         return X_scaled, y
